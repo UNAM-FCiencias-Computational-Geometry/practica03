@@ -6,7 +6,6 @@
 
 #include "dcel/dcel.h"
 #include "double_linked_list/double_linked_list.h"
-#include "leftist_heap/leftist_heap.h"
 
 #include "algorithms/make_monotone.h"
 
