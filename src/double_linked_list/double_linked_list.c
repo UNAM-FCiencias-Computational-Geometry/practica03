@@ -204,3 +204,24 @@ void* pick_front(list* list)
 	else
 		return list->head->element;
 }
+
+void print_list(list* list)
+{
+	
+	if (list == NULL)
+		return;
+	
+	item* tmp;
+
+	for (tmp = list->head; tmp != NULL ; tmp = tmp->right) {
+		if (list->type == HALF_EDGE)		
+			printf("half_edge: %s\n", ((half_edge*)tmp->element)->name);
+		
+		if (list->type == FACE)		
+			printf("face: %s\n", ((face*)tmp->element)->name);
+		
+		if (list->type == POINT)		
+			printf("point: %s\n", ((vertex*)tmp->element)->name);
+		
+	}
+}

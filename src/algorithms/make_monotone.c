@@ -27,6 +27,19 @@ void make_monotone(dcel* dcel)
 	srand(time(NULL));
 
 	/** Aqui debe comienzar tu algoritmo. */
+	/*
+	list* l;
+	list_item* tmp;
+	rb_tree* rb_tree;
+	
+	l = rb_tree_to_priority_queue(dcel->vertex);
+	tmp = l->head;
+	rb_tree = init_rb_tree(HALF_EDGE);
+	
+	while(tmp != NULL){
+		break;		
+	}
+	*/
 	return;
 }
 
@@ -82,6 +95,10 @@ vertex_type calculate_vertex_type(vertex* p)
 
 void handle_start_vertex(vertex* vi, rb_tree* tree, dcel* dcel) 
 {
+	/*half_edge* he = vi->incident_edge;
+	rb_insert(tree, he);
+	he->helper = vi;
+	*/
 }
 
 void handle_merge_vertex(vertex* vi, rb_tree* tree, dcel* dcel) 
@@ -90,14 +107,30 @@ void handle_merge_vertex(vertex* vi, rb_tree* tree, dcel* dcel)
 
 void handle_regular_vertex(vertex* vi, rb_tree* tree, dcel* dcel)
 {
+	
 }
 
 void handle_split_vertex(vertex* vi, rb_tree* tree, dcel* dcel)
 {
+	/*
+	half_edge *vi_incident, *he_j;
+	he_j = rb_search_left_he(tree, vi);
+	vi_incident = vi->incident_edge;
+	
+	connect_diagonal(vi, he->helper, dcel);
+	he->helper = vi;
+	rb_insert(tree, vi_incident);
+	vi_incident->helper = vi;*/
 }
 
-void handle_end_vertex(vertex* vi, rb_tree* tree, dcel* dcel)
-{
+void handle_end_vertex(vertex* vi, rb_tree* tree, dcel* dcel) //cambie firma
+{ /*
+	if(ant->helper == MERGE){
+		connect_diagonal(vi, ant->helper, dcel, );//duda para mañana
+	} 	
+	
+	rb_delete(tree, ant);
+	*/
 }
 
 void connect_diagonal(vertex* first, vertex* last, dcel* dcel, rb_tree* tree) 
@@ -183,3 +216,4 @@ void connect_diagonal(vertex* first, vertex* last, dcel* dcel, rb_tree* tree)
 	return;
 	
 }
+ 

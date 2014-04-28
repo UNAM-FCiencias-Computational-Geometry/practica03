@@ -696,6 +696,22 @@ list* rb_tree_to_list(rb_tree* tree)
 	return list;
 }
 
+list* rb_tree_to_priority_queue(rb_tree* tree){
+	
+	if (tree == NULL)
+		return NULL;
+
+	list* list = init_double_linked_list(tree->type);
+	rb_node* tmp = tree->min;
+
+	while(tmp != tree->sentinel) {
+		push_front(list,tmp->element);
+		tmp = tmp->next;
+	}
+
+	return list;
+
+}
 
 rb_node* rb_search_left_node(rb_tree* tree, vertex* v)
 {

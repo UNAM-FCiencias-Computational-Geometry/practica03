@@ -96,6 +96,9 @@ void* rb_max(rb_tree* tree);
  */
 list* rb_tree_to_list(rb_tree* tree);
 
+/** Crea la lista de prioridades con respecto al eje Y de mayor a menor*/
+list* rb_tree_to_priority_queue(rb_tree* tree);
+
  /** Busca el nodo más cercano por el lado izquierdo al vértice v. */
 rb_node* rb_search_left_node(rb_tree* tree, vertex* v);
 

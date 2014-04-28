@@ -15,6 +15,8 @@
 int main(void)
 {	
 	dcel* dcel = construct_example();
+	list* l = rb_tree_to_priority_queue(dcel->vertex);
+	print_list(l);
 	
 	make_monotone(dcel);
 		  

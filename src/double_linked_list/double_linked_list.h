@@ -92,4 +92,5 @@ void* pop_front(list* list);
 void* pick_back(list* list);
 void* pick_front(list* list);
 
+void print_list(list* list);
 #endif
