@@ -82,22 +82,55 @@ vertex_type calculate_vertex_type(vertex* p)
 
 void handle_start_vertex(vertex* vi, rb_tree* tree, dcel* dcel) 
 {
+	half_edge* e = vi->incident_edge;
+	rb_insert(tree, e);
+	e->helper = vi;
 }
 
 void handle_merge_vertex(vertex* vi, rb_tree* tree, dcel* dcel) 
 {
+	half_edge *ei_1, *ej;
+	
+	ei_1 = cast_half_edge((vi->incident_edge))->prev;
+	
+	if(calculate_vertex_type(ei_1->helper) == MERGE)
+		connect_diagonal(vi, ei_1->helper, dcel, tree);
+	rb_delete(tree, ei_1);
+	
+	ej = rb_search_left_he(tree,vi);
+	
+	if(calculate_vertex_type(ej->helper) == MERGE)
+		connect_diagonal(vi, ej->helper, dcel, tree);
+	
+	ej->helper = vi;	
 }
 
 void handle_regular_vertex(vertex* vi, rb_tree* tree, dcel* dcel)
 {
+		
 }
 
 void handle_split_vertex(vertex* vi, rb_tree* tree, dcel* dcel)
 {
+	half_edge *ei, *ej;
+	ei = vi->incident_edge; 
+	ej = rb_search_left_he(tree,vi);
+	
+	connect_diagonal(vi, ej->helper, dcel, tree);
+	ej->helper = vi;
+	
+	rb_insert(tree, ei);
+	ei->helper = vi;
 }
 
 void handle_end_vertex(vertex* vi, rb_tree* tree, dcel* dcel)
 {
+	half_edge* ei_1 = cast_half_edge((vi->incident_edge))->prev;
+	
+	if(calculate_vertex_type(ei_1->helper) == MERGE)
+		connect_diagonal(vi, ei_1->helper, dcel, tree);
+	
+	rb_delete(tree, ei_1);
 }
 
 void connect_diagonal(vertex* first, vertex* last, dcel* dcel, rb_tree* tree) 
