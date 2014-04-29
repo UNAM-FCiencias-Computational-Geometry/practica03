@@ -20,7 +20,6 @@ module RBTree
 
   class Tree < FFI::Struct
     layout :root, :pointer,
-           :sentinel, :pointer,
            :size, :int,
            :type, Item_type,
            :min, :pointer,
