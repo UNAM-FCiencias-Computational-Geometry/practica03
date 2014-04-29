@@ -44,7 +44,6 @@ typedef struct rb_node rb_node;
 */
 struct rb_tree {
 	struct rb_node* root;
-	struct rb_node* sentinel;
 
 	int size;
 	item_type type;
@@ -66,7 +65,7 @@ rb_tree* init_rb_tree(item_type type);
 void destroy_rb_tree(rb_tree* tree);
 
 /** Inicializa un nodo. */
-rb_node* init_rb_node(rb_tree* tree);
+rb_node* init_rb_node();
 
 /** Destruye un nodo. */
 void destroy_rb_node(rb_tree* tree, rb_node* node);
