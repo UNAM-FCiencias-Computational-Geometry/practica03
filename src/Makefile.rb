@@ -90,7 +90,7 @@ def compile
     }
     
     if (@so == "linux")
-      command = "#{@cc} -shared -o lib/lib#{library} #{obj[0..-3] + "o"}" +
+      command = "#{@cc} -shared -Wl,-soname,lib#{library} -o lib/lib#{library} #{obj[0..-3] + "o"}" +
                 " -L#{@lib_dir} #{libs}"
     elsif (@so == "mac")
       command = "#{@cc} -shared -o lib/lib#{library} #{obj[0..-3] + "o"}" +

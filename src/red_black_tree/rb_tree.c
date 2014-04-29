@@ -5,9 +5,9 @@
 
 #include "red_black_tree/rb_tree.h"
 
-#include "face/face.h"
 #include "half_edge/half_edge.h"
 #include "points/2d_points.h"
+#include "face/face.h"
 
 #include "types/types.h"
 
