@@ -5,40 +5,16 @@
 
 #include "red_black_tree/rb_tree.h"
 
-#include "face/face.h"
 #include "half_edge/half_edge.h"
 #include "points/2d_points.h"
+#include "face/face.h"
 
 #include "types/types.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-/** Inicializa el nodo sentinela de cada arbol. */
-rb_node* init_rb_sentinel()
-{
-	struct rb_node* sentinel;
-	sentinel = (struct rb_node*) malloc(sizeof(struct rb_node));
-	
-	if (sentinel == NULL) {
-		printf("Ya no hay memoria disponible: init_rb_sentinel()\n");
-		exit(EXIT_FAILURE);
-	}
-		
-	sentinel->left = NULL;
-	sentinel->right = NULL;
-	sentinel->parent =  NULL;
-
-	sentinel->color = BLACK;
-	
-	sentinel->element = NULL;
-
-	sentinel->prev = NULL;
-	sentinel->next = NULL;
-	
-	return sentinel;
-}
-
+struct rb_node sentinel = {NULL,NULL,NULL,BLACK,NULL,NULL,NULL};
 
 /**  Verifica si el arbol que se le pase esta vacio o no.*/
 int empty_rb_tree(struct rb_tree* tree)
@@ -46,7 +22,7 @@ int empty_rb_tree(struct rb_tree* tree)
 	if (tree == NULL)
 		return tree == NULL;
 
-	return tree->size == 0;
+	return tree->root == &sentinel;
 }
 
 /**
@@ -58,25 +34,25 @@ int empty_rb_tree(struct rb_tree* tree)
  *       / \                / \
  *      c   *              *   c
  */
-void left_rotate(rb_tree* tree, rb_node* node)
+void left_rotate(struct rb_tree* tree, struct rb_node* node)
 {
 	struct rb_node *tmp1, *tmp2;
-	tmp1 = node;
-	tmp2 = node->right;
+ 	tmp1 = node;
+ 	tmp2 = node->right;
+
+ 	tmp1->right = tmp2->left;
 	
-	tmp1->right = tmp2->left;
-	
-	if (tmp2->left != tree->sentinel) 
-		tmp2->left->parent = tmp1;
+	if (tmp2->left != &sentinel) 
+ 		tmp2->left->parent = tmp1;
 
 	tmp2->parent = tmp1->parent;
 
-	if (tmp1->parent == tree->sentinel) {
+	if (tmp1->parent == &sentinel) {
 		tree->root = tmp2;
 	} else if (tmp1 == tmp1->parent->left) {
-		tmp1->parent->left = tmp2;
+	 	tmp1->parent->left = tmp2;
 	} else {
-		tmp1->parent->right = tmp2;
+	 	tmp1->parent->right = tmp2;
 	}
 
 	tmp2->left = tmp1;
@@ -91,7 +67,7 @@ void left_rotate(rb_tree* tree, rb_node* node)
  *   / \                  /	\
  *	*   c                c   *
  */
-void right_rotate(rb_tree* tree, rb_node* node)
+void right_rotate(struct rb_tree* tree, struct rb_node* node)
 {
 	struct rb_node *tmp1, *tmp2;
 	tmp1 = node;
@@ -99,17 +75,17 @@ void right_rotate(rb_tree* tree, rb_node* node)
 
 	tmp1->left = tmp2->right;
 
-	if (tmp2->right != tree->sentinel)
-		tmp2->right->parent = tmp1;
+	if (tmp2->right != &sentinel)
+	 tmp2->right->parent = tmp1;
 
 	tmp2->parent = tmp1->parent;
 
-	if (tmp1->parent == tree->sentinel) {
+	if (tmp1->parent == &sentinel) {
 		tree->root = tmp2;
 	} else if(tmp1 == tmp1->parent->left) {
-		tmp1->parent->left = tmp2;
+	 	tmp1->parent->left = tmp2;
 	} else {
-		tmp1->parent->right = tmp2;
+	 	tmp1->parent->right = tmp2;
 	}
 	
 	tmp2->right = tmp1;
@@ -198,14 +174,14 @@ void rb_insert_fixup(rb_tree* tree, rb_node* node)
  * b que su padre cambio, al nodo a no le dice que su padre ya 
  * no hace referencia
  */
-void rb_transplant(rb_tree* tree, rb_node* a, rb_node* b)
+void rb_transplant(struct rb_tree* tree, struct rb_node* a,struct rb_node* b)
 {
-	if (a->parent == tree->sentinel) {
+	if (a->parent == &sentinel) {
 		tree->root = b;
 	} else if (a == a->parent->left) {
 		a->parent->left = b;
 	} else {
-		a->parent->right = b;
+	 	a->parent->right = b;
 	}
 	
 	b->parent = a->parent;
@@ -261,7 +237,7 @@ rb_node* rb_node_search(rb_tree* tree, void* element)
 	struct rb_node* tmp;
 	tmp = tree->root;
 
-	while(tmp != tree->sentinel) {
+	while(tmp != &sentinel) {
 		if (rb_equals(tree->type,tmp->element,element)) {
 			break;
 		} else if(rb_less_than(tree->type, tmp->element ,element)) {
@@ -271,7 +247,7 @@ rb_node* rb_node_search(rb_tree* tree, void* element)
 		}
 	}
 	
-	if (tmp == tree->sentinel)
+	if (tmp == &sentinel)
 		return NULL;
 
 	return tmp;
@@ -371,10 +347,10 @@ struct rb_node* rb_min_node(struct rb_tree* tree,struct rb_node* node)
 	if (tmp == NULL)
 		return NULL;
 
-	if (tmp == tree->sentinel)
+	if (tmp == &sentinel)
 		return tmp;
 
-	while(tmp->left != tree->sentinel)
+	while(tmp->left != &sentinel)
 		tmp = tmp->left;
 
 	return tmp;
@@ -390,10 +366,10 @@ struct rb_node* rb_max_node(struct rb_tree* tree,struct rb_node* node)
 	if (tmp == NULL)
 		return NULL;
 
-	if (tmp == tree->sentinel)
+	if (tmp == &sentinel)
 		return tmp;
 
-	while(tmp->right != tree->sentinel)
+	while(tmp->right != &sentinel)
 		tmp = tmp->right;
 	
 	return tmp;
@@ -422,7 +398,7 @@ void destroy_element(item_type type, void* element)
 
 int is_left_son(rb_tree* tree, rb_node* node) 
 {
-	if (node->parent == tree->sentinel) {
+	if (node->parent == &sentinel) {
 		return TRUE;
 	}
 
@@ -439,14 +415,12 @@ struct rb_tree* init_rb_tree(item_type type)
 		printf("Ya no hay memoria disponible: init_rb_tree()\n");
 		exit(EXIT_FAILURE);
 	}
-
-	tree->sentinel = init_rb_sentinel();
-
-	tree->root = tree->sentinel;
+	
+	tree->root = &sentinel;
 	tree->type = type;
 	tree->size = 0;
 	
-	tree->min = tree->max = tree->sentinel;
+	tree->min = tree->max = &sentinel;
 
 	return tree;
 }
@@ -475,7 +449,7 @@ void destroy_rb_tree_with_elements(rb_tree* tree)
 	free(tree);
 }
 
-struct rb_node* init_rb_node(struct rb_tree* tree){
+struct rb_node* init_rb_node(){
 	struct rb_node* node;
 	node = (struct rb_node*) malloc(sizeof(struct rb_node));
 	
@@ -484,10 +458,10 @@ struct rb_node* init_rb_node(struct rb_tree* tree){
 		exit(EXIT_FAILURE);
 	}
 
-	node->left = node->right = node->parent = tree->sentinel;
+	node->left = node->right = node->parent = &sentinel;
 	node->color = RED;
 	
-	node->prev = node->next = tree->sentinel;
+	node->prev = node->next = &sentinel;
 
 	node->element = NULL;
 
@@ -496,7 +470,7 @@ struct rb_node* init_rb_node(struct rb_tree* tree){
 
 void destroy_rb_node(rb_tree* tree, struct rb_node* node)
 {
-	if (node != NULL && node != tree->sentinel)
+	if (node != NULL && node != &sentinel)
 		free(node);
 }
 
@@ -504,9 +478,9 @@ void rb_insert(struct rb_tree* tree, void* element)
 {	
 	struct rb_node *tmp1, *tmp2;
 	tmp1 = tree->root;
-	tmp2 = tree->sentinel;
+	tmp2 = &sentinel;
 
-	while (tmp1 != tree->sentinel) {
+	while (tmp1 != &sentinel) {
 		tmp2 = tmp1;	   
 		
 		if (rb_less_than(tree->type, element, tmp1->element))
@@ -516,12 +490,12 @@ void rb_insert(struct rb_tree* tree, void* element)
 	}
 
 	struct rb_node* node;
-	node = init_rb_node(tree);
+	node = init_rb_node();
 	
 	node->parent = tmp2;
 	node->element = element;
 
-	if (tmp2 == tree->sentinel) {
+	if (tmp2 == &sentinel) {
 		tree->root = node;
 	} else if (rb_less_than(tree->type, element, tmp2->element)) {
 		tmp2->left = node;
@@ -533,7 +507,7 @@ void rb_insert(struct rb_tree* tree, void* element)
 	tree->size += 1;
 
 	/** Mantengo los apuntadores prev y next de forma consistente. */
-	if (tree->min == tree->sentinel) {
+	if (tree->size == 1) {
 		tree->min = tree->max = node;		
 		return;
 	}
@@ -559,10 +533,10 @@ void rb_insert(struct rb_tree* tree, void* element)
 	}
 
 	rb_node *pre, *suc;
-	suc = tree->sentinel;
+	suc = &sentinel;
 	
 	pre = rb_max_node(tree,node->left);
-	if (pre != tree->sentinel) {
+	if (pre != &sentinel) {
 		
 		suc = pre->next;
 
@@ -594,7 +568,7 @@ void* rb_search(struct rb_tree* tree, void* element)
 
 	struct rb_node* tmp = rb_node_search(tree,element);
 
-	if (tmp == NULL || tmp == tree->sentinel)
+	if (tmp == NULL || tmp == &sentinel)
 		return NULL;
 	else
 		return tmp->element;
@@ -605,20 +579,22 @@ void* rb_delete(rb_tree* tree, void* element)
 	struct rb_node *tmp1, *tmp2, *tmp3;
 	tmp1 = rb_node_search(tree,element);
 		
-	if (tmp1 == NULL || tmp1 == tree->sentinel)
+	if (tmp1 == NULL || tmp1 == &sentinel)
 		return NULL;
-
+	
+	void* original_element = tmp1->element;
+	
 	if (tree->size == 1) {
-		tree->min = tree->max = tree->sentinel;
+		tree->min = tree->max = &sentinel;
 	} else {
 		if ((tree->min == tmp1) || (tree->max == tmp1)) {
 			if (tree->min == tmp1) {
 				tree->min = tmp1->next;
-				tmp1->next->prev = tree->sentinel;
+				tmp1->next->prev = &sentinel;
 			}
 			if (tree->max == tmp1) {				
 				tree->max = tmp1->prev;
-				tmp1->prev->next = tree->sentinel;
+				tmp1->prev->next = &sentinel;
 			}
 		} else {
 			tmp1->next->prev = tmp1->prev;
@@ -629,10 +605,10 @@ void* rb_delete(rb_tree* tree, void* element)
 	tmp2 = tmp1;
 	color tmp2_original_color = tmp2->color;
 	
-	if (tmp1->left == tree->sentinel) {
+	if (tmp1->left == &sentinel) {
 		tmp3 = tmp1->right;
 		rb_transplant(tree,tmp1,tmp1->right);
-	} else if(tmp1->right == tree->sentinel) {
+	} else if(tmp1->right == &sentinel) {
 		tmp3 = tmp1->left;
 		rb_transplant(tree,tmp1,tmp1->left);
 	} else {
@@ -659,7 +635,7 @@ void* rb_delete(rb_tree* tree, void* element)
  	
 	tree->size -= 1;	
 	destroy_rb_node(tree,tmp1);
-	return element;
+	return original_element;
 }
 
 void* rb_min(rb_tree* tree)
@@ -688,7 +664,7 @@ list* rb_tree_to_list(rb_tree* tree)
 	list* list = init_double_linked_list(tree->type);
 	rb_node* tmp = tree->min;
 
-	while(tmp != tree->sentinel) {
+	while(tmp != &sentinel) {
 		push_back(list,tmp->element);
 		tmp = tmp->next;
 	}
@@ -724,7 +700,7 @@ rb_node* rb_search_left_node(rb_tree* tree, vertex* v)
 			
 	half_edge* tmp_he = tmp->element;
 
-	while(tmp != tree->sentinel) {
+	while(tmp != &sentinel) {
 		
 		if (tmp_he->first->x < v->x) {
 			left = tmp;
@@ -737,7 +713,7 @@ rb_node* rb_search_left_node(rb_tree* tree, vertex* v)
 		}
 	}
 	
-	if (left == tree->sentinel)
+	if (left == &sentinel)
 		return NULL;
 
 	return left;

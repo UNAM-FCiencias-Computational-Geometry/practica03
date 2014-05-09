@@ -78,4 +78,7 @@ int point_equals(vertex* a, vertex* b);
 
 /** Funcion que hace un casting del punto, sirve para los tests. */
 vertex* cast_point(void* a);
+
+/** Imprime el valor de un vertice */
+void print_vertex(vertex* v);
 #endif

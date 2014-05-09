@@ -103,3 +103,11 @@ vertex* cast_point(void* a)
 {
 	return (vertex*) a;
 }
+
+void print_vertex(vertex* v){
+	if(v != NULL){
+		printf("%s(%.2f, %.2f)\n", v->name, v->x, v->y);
+	}else{
+		printf("NULL\n");
+	}
+}

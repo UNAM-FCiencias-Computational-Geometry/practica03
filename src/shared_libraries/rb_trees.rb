@@ -20,10 +20,10 @@ module RBTree
 
   class Tree < FFI::Struct
     layout :root, :pointer,
-           :sentinel, :pointer,
            :size, :int,
-           :type, Item_type
-           
+           :type, Item_type,
+           :min, :pointer,
+           :max, :pointer  
   end
 
   attach_function :init_rb_tree, [Item_type], Tree.by_ref
